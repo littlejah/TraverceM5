@@ -6,7 +6,7 @@
 #include <QDebug>
 
 
-QVector<Traverse> TraverseParser::parseFile(const QString &filePath)
+QVector<Traverse*> TraverseParser::parseFile(const QString &filePath)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -15,12 +15,12 @@ QVector<Traverse> TraverseParser::parseFile(const QString &filePath)
     }
 
     QTextStream in(&file);
-    QVector<Traverse> result;
+    QVector<Traverse*> result;
     QStringList currentBlock;
     bool inside = false;
     static const QRegularExpression re_start_traverce("TO\\s*(?P<kewword>Start[- ]+Line)\\s+(?P<pattern>[BF]{4})\\s*(?P<number>(\\d+))");
     static const QRegularExpression re_end_traverce("TO\\s*(?P<kewword>End[- ]Line)\\s+(?P<number>(\\d+))");
-    Traverse temp_traverce;
+    Traverse *temp_traverce=nullptr;
     while (!in.atEnd()) {
 
         QString line = in.readLine();
@@ -31,9 +31,9 @@ QVector<Traverse> TraverseParser::parseFile(const QString &filePath)
         {
             QString pattern = start_match.captured(QString::fromStdWString(L"pattern"));
             int line_no = start_match.captured(QString::fromStdWString(L"number")).toInt();
-            temp_traverce=Traverse();
-            temp_traverce.lineNo=line_no;
-            temp_traverce.pattern=pattern;
+            temp_traverce= new Traverse();
+            temp_traverce->lineNo=line_no;
+            temp_traverce->pattern=pattern;
             inside=true;
             currentBlock.clear();
             currentBlock.append(line);
@@ -42,9 +42,10 @@ QVector<Traverse> TraverseParser::parseFile(const QString &filePath)
         }
         if (inside)
         {
-            if (parts[2].contains(QString::fromStdWString(L"Station repeated"))||
+            if (//parts[2].contains(QString::fromStdWString(L"Station repeated"))||
                     parts[2].contains(QString::fromStdWString(L"Measurement repeated"))||
-                    parts[2].contains(QString::fromStdWString(L"##")))
+                    parts[2].contains(QString::fromStdWString(L"##"))
+                        )
             {
                 continue;
             }
@@ -73,10 +74,10 @@ QVector<Traverse> TraverseParser::parseFile(const QString &filePath)
     return result;
 }
 
-bool TraverseParser::parseBlock(const QStringList &Block, Traverse &traverse)
+bool TraverseParser::parseBlock(const QStringList &Block, Traverse *traverse)
 {
-
-    qDebug()<<Block.size()<<traverse.lineNo<<traverse.pattern;
+    if (traverse==nullptr) return false;
+    qDebug()<<Block.size()<<traverse->lineNo<<traverse->pattern;
     int station_index=0;
 
     Station* temp_station=nullptr;
@@ -94,14 +95,15 @@ bool TraverseParser::parseBlock(const QStringList &Block, Traverse &traverse)
 
 
         auto data=block_line.split('|');
+        if (data[2].contains(QString::fromStdWString(L"Station repeated"))) continue;
 
-        if (station_queue.size()==(traverse.pattern.length()+2))
+        if (station_queue.size()==(traverse->pattern.length()+2))
         {
 
             temp_station= new Station();
-            temp_station->name=QString::fromStdWString(L"%1.%2").arg(traverse.lineNo).arg(station_index);
-            parceStation(station_queue,temp_station,traverse.pattern);
-            traverse.stations.append(temp_station);
+            temp_station->name=QString::fromStdWString(L"%1.%2").arg(traverse->lineNo).arg(station_index);
+            parceStation(station_queue,temp_station,traverse->pattern);
+            traverse->stations.append(temp_station);
             station_index++;
 
 
@@ -115,7 +117,8 @@ bool TraverseParser::parseBlock(const QStringList &Block, Traverse &traverse)
             for (int j=i+1;j<Block.size();j++)
             {
                 auto data_fs=Block[j].split('|');
-                if (data_fs[2].contains(QString::fromStdWString(L"End of interm. sight.")))
+                if (data_fs[2].contains(QString::fromStdWString(L"End of interm. sight."))||
+                    data_fs[2].contains(QString::fromStdWString(L"Station repeated")))
                 {
 
                     parseForesightBlock(foresight_block,temp_station);
@@ -139,9 +142,9 @@ bool TraverseParser::parseBlock(const QStringList &Block, Traverse &traverse)
         {
             bool ok = false;
             double tmp=parseDouble(data[3],ok);
-            if(ok) traverse.sh=tmp;
+            if(ok) traverse->sh=tmp;
             tmp=parseDouble(data[4],ok);
-            if(ok) traverse.dz=tmp;
+            if(ok) traverse->dz=tmp;
             continue;
 
         }
@@ -150,9 +153,9 @@ bool TraverseParser::parseBlock(const QStringList &Block, Traverse &traverse)
         {
             bool ok = false;
             double tmp=parseDouble(data[3],ok);
-            if(ok) traverse.hd_back=tmp;
+            if(ok) traverse->hd_back=tmp;
             tmp=parseDouble(data[4],ok);
-            if(ok) traverse.hd_front=tmp;
+            if(ok) traverse->hd_front=tmp;
             continue;
 
         }
@@ -353,3 +356,27 @@ bool TraverseParser::parseForesightBlock(const QStringList &block, Station *Stat
 
 //KD\d+\s+(?P<name>\S+)\s+(?P<temperature>-?\d+\.\d+)\s+(C|F)\s*(?P<code>\d+)\s+(?P<lineno>\d+)
 //KD\d+\s+(?P<name>\S+)\s+(?P<lineno>\d+)$
+
+Station::~Station()
+{
+    for (int i=0;i<fores.count();++i)
+    {
+        if (fores[1]!=nullptr) delete fores[i];
+    }
+    for (int i=0;i<backs.count();++i)
+    {
+        if (backs[1]!=nullptr) delete backs[i];
+    }
+    for (int i=0;i<sideshots.count();++i)
+    {
+        if (sideshots[1]!=nullptr) delete sideshots[i];
+    }
+}
+
+Traverse::~Traverse()
+{
+    for(int i=0;i<stations.count();++i)
+    {
+        if (stations[i]!=nullptr) delete stations[i];
+    }
+}
