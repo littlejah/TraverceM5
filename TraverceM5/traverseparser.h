@@ -6,38 +6,38 @@
 #include <QMap>
 
 
-struct Observation {
-    QString pointName;
-    double temperature=0.0;
-    int code=0;
-    int line_no=0;
-    double r = 0.0;
-    double hd = 0.0;
-    double z=0.0;
-    QString type; // "Rb", "Rf", "Rz"
+struct Observation {  // Измерение на точку
+    QString pointName; // Имя точки
+    double temperature=0.0; // Температура воздуха
+    int code=0;             // Полевой код
+    int line_no=0;          // Номер нивелирного хода
+    double r = 0.0;         // Измеренное превышение
+    double hd = 0.0;        // Горизонтальное проложение
+    double z=0.0;           // Измеренная вычисленная Z
+    QString type; // Тип измерения "Rb" - назад, "Rf" - вперед, "Rz" - боковое
 };
 
-struct Station {
-    QString name; // e.g. "168.1"
-    QString pointBack;
-    QString pointFore;
-    double Z_back = 0.0;
-    double Z_fore = 0.0;
-    QVector<Observation*> backs=QVector<Observation*>();
-    QVector<Observation*> fores=QVector<Observation*>();
-    QVector<Observation*> sideshots=QVector<Observation*>();
-    bool isValid = false;
+struct Station {     // Станция
+    QString name; //  Имя станции "НомерХода.ИндексСтанции"
+    QString pointBack; // Имя точки ориентирование назад
+    QString pointFore; // Имя точки ориентирование вперед
+    double Z_back = 0.0; // Z задней точки
+    double Z_fore = 0.0; // Z передней точки
+    QVector<Observation*> backs=QVector<Observation*>(); // Измерения на заднюю точку
+    QVector<Observation*> fores=QVector<Observation*>(); // Измерения на переднюю точку
+    QVector<Observation*> sideshots=QVector<Observation*>(); // Боковые измерения
+    bool isValid = false;   // Валидность станции
     ~Station();
 };
 
-struct Traverse {
-    int lineNo = -1;
-    QString pattern; // BFFB, FBBF, etc.
-    QVector<Station*> stations =QVector<Station*>();
-    double hd_front=0;
-    double hd_back=0;
-    double sh=0;
-    double dz=0;
+struct Traverse {    // Нивелирный ход
+    int lineNo = -1; // Номер хода
+    QString pattern; // Порядок измерения BFFB, FBBF, etc.
+    QVector<Station*> stations =QVector<Station*>(); // станции хода
+    double hd_front=0; // Горизонтальное проложение вперед
+    double hd_back=0; // Горизонтальное проложение назад
+    double sh=0;   // Суммарное превишение назад
+    double dz=0; // Суммарное превишение вперед
     ~Traverse();
 };
 

@@ -361,15 +361,15 @@ Station::~Station()
 {
     for (int i=0;i<fores.count();++i)
     {
-        if (fores[1]!=nullptr) delete fores[i];
+        if (fores[i]!=nullptr) delete fores[i];
     }
     for (int i=0;i<backs.count();++i)
     {
-        if (backs[1]!=nullptr) delete backs[i];
+        if (backs[i]!=nullptr) delete backs[i];
     }
     for (int i=0;i<sideshots.count();++i)
     {
-        if (sideshots[1]!=nullptr) delete sideshots[i];
+        if (sideshots[i]!=nullptr) delete sideshots[i];
     }
 }
 

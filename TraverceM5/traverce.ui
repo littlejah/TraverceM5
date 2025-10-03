@@ -6,61 +6,128 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>966</width>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Traverce</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Ход</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QTableView" name="StationTable"/>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Измерения</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Станция</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLineEdit" name="FileName"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="OpenBtn">
-         <property name="text">
-          <string>Открыть</string>
-         </property>
-        </widget>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="TraverseTab">
+      <attribute name="title">
+       <string>Хода</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Ход</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QTableView" name="StationTable"/>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Измерения</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Станция</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLineEdit" name="FileName"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="OpenBtn">
+             <property name="text">
+              <string>Открыть</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="0">
+          <widget class="QTableView" name="TraverseTable"/>
+         </item>
+         <item row="7" column="0">
+          <widget class="QTableView" name="ObservationTable"/>
+         </item>
+        </layout>
        </item>
       </layout>
-     </item>
-     <item row="3" column="0">
-      <widget class="QTableView" name="TraverseTable"/>
-     </item>
-     <item row="7" column="0">
-      <widget class="QTableView" name="ObservationTable"/>
-     </item>
-    </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Точки</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Исходные</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableView" name="SourcePoints"/>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="1">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Определенные</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableView" name="ComputedPoints"/>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLineEdit" name="PointFile"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="ImportPoints_bth">
+             <property name="text">
+              <string>Открыть</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
